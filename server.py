@@ -2,23 +2,22 @@
 from socket import *
 # In order to terminate the program
 import sys
-
+#sudo netstat -ap | grep :6201 to check if all sockets are  killed
+serverPort = 6201
 serverSocket = socket(AF_INET, SOCK_STREAM)
-#Prepare a sever socket
-#Fill in start
-#Fill in end
+serverSocket.bind(('',serverPort))
+serverSocket.listen(1)
 while True:
     #Establish the connection
     print('Ready to serve...')
-    connectionSocket, addr =
+    connectionSocket, addr = serverSocket.accept()
     try:
-        message =   #Fill in start          #Fill in end
+        message = connectionSocket.recv(1024)
         filename = message.split()[1]
         f = open(filename[1:])
-        outputdata = #Fill in start       #Fill in end
+        outputdata = f.read()
         #Send one HTTP header line into socket
-        #Fill in start
-        #Fill in end
+        connectionSocket.send('HTTP/1.1 200 OK\r\n Content-Type: text/html\r\n\r\n')
         #Send the content of the requested file to the client
         for i in range(0, len(outputdata)):
             connectionSocket.send(outputdata[i].encode())
@@ -26,11 +25,11 @@ while True:
 
         connectionSocket.close()
     except IOError:
-        #Send response message for file not found
-        #Fill in start
-        #Fill in end
+        #Let user know the file was not found with status code
+        connectionSocket.send("HTTP/1.1 404 Not Found\r\n\r\n")
+        connectionSocket.send("<html><head></head><body><h1>404 Not Found</h1></body></html>\r\n")
         #Close client socket
-        #Fill in start
-        #Fill in end
+        connectionSocket.close()
+        print("Socket Closed.")
 serverSocket.close()
 sys.exit()#Terminate the program after sending the corresponding data
