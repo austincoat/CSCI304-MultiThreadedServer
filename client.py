@@ -42,4 +42,5 @@ while responseMessage:
 	responseMessage = clientSocket.recv(1024)
 clientSocket.close()
 print "Client Set To Inactive. . ."
+#Then so you know if the client actually received the information due to a lack of the gui vv
 print response
