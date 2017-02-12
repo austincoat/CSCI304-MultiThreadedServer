@@ -6,7 +6,8 @@ serverSocket = socket(AF_INET, SOCK_STREAM)
 serverSocket.bind(('',serverPort))
 serverSocket.listen(5)
 
-#Found use of this function in Python
+#Found use of this function in seperate python documentation and http://stackoverflow.com/questions/2846653/how-to-use-threading-in-python
+# The link used a def to activate it in a lower thread maker. So I put my server in here to start multiple ones.
 def createThread(tSocket,trash):
     try:
         message = tSocket.recv(1024)
@@ -28,11 +29,15 @@ def createThread(tSocket,trash):
 
 
 while True:
-    #Establish the connection
+    #Used Stack OverFlow Code for inspiration http://stackoverflow.com/questions/2846653/how-to-use-threading-in-python
     print('Ready to serve')
     tSocket, trash = serverSocket.accept()
+    threads = []
     try:
-        threading.Thread(target=createThread,args=(tSocket, trash)).start()
+        t = threading.Thread(target=createThread,args=(tSocket, trash))
+        t.daemon = True
+        t.start()
+        threads.append(t)
     except IOError:
         print("Thread not active")
 
