@@ -6,7 +6,7 @@ import sys
 serverPort = 6201
 serverSocket = socket(AF_INET, SOCK_STREAM)
 serverSocket.bind(('',serverPort))
-serverSocket.listen(1)
+serverSocket.listen(5)
 while True:
     #Establish the connection
     print('Ready to serve...')
@@ -16,16 +16,15 @@ while True:
         filename = message.split()[1]
         f = open(filename[1:])
         outputdata = f.read()
-        #Send one HTTP header line into socket
+        #Send one HTTP header line into socket, only expecting html
         connectionSocket.send('HTTP/1.1 200 OK\r\n Content-Type: text/html\r\n\r\n')
         #Send the content of the requested file to the client
         for i in range(0, len(outputdata)):
             connectionSocket.send(outputdata[i].encode())
         connectionSocket.send("\r\n".encode())
-
         connectionSocket.close()
     except IOError:
-        #Let user know the file was not found with status code
+        #Let user know the file was not found with status code 404
         connectionSocket.send("HTTP/1.1 404 Not Found\r\n\r\n")
         connectionSocket.send("<html><head></head><body><h1>404 Not Found</h1></body></html>\r\n")
         #Close client socket
